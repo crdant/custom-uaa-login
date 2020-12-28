@@ -1,0 +1,48 @@
+server:
+  port: 8443
+  ssl:
+    key-store: /usr/local/etc/certbot/live/local.crdant.io/certificate.p12
+    keyStoreType: PKCS12
+    keyAlias: local
+    key-store-password: numb-avaunt-barbados-pelt
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: "*"
+
+uaa:
+  baseUrl: https://demo.uaa.local.crdant.io:8443
+  clientId: login-demo
+  clientSecret: empyrean-aviatrix-tug-lately
+
+logging:
+  level:
+    org.springframework.cloud.gateway: TRACE
+
+spring:
+  autoconfigure:
+    # TODO: remove when fixed https://github.com/spring-projects/spring-security/issues/6314
+     exclude: org.springframework.boot.actuate.autoconfigure.security.reactive.ReactiveManagementWebSecurityAutoConfiguration
+  webflux:
+    static-path-pattern: "/**"
+  resources:
+    static-locations: "classpath:/static/"
+  security:
+    oauth2:
+      client:
+        provider:
+          uaa:
+            authorization-uri: https://mapfre.uaa.local.crdant.io:8443/oauth/authorize
+            token-uri: http://mapfre.uaa.local.crdant.io:8443/oauth/token
+            user-info-uri: http://mapfre.uaa.local.crdant.io:8443/userinfo
+            user-name-attribute: sub
+            jwk-set-uri: http://mapfre.uaa.local.crdant.io:8443/token_keys
+        registration:
+          uaa:
+            client-id: login-demo
+            client-secret: empyrean-aviatrix-tug-lately
+            authorization-grant-type: authorization_code
+            redirect-uri-template: "{baseUrl}/login/oauth2/code/{registrationId}"
+            scope: openid,profile,email
